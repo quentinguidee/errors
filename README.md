@@ -32,6 +32,8 @@ if errors.As(err, &target) && target.Code < 500 {
 }
 ```
 
+A basic echo middleware is already implemented if needed [here](./middleware/echo/middleware.go).
+
 ## LICENSE
 
 This package is licensed under the [MIT License](./LICENSE.md).
