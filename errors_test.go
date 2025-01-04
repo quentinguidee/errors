@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"encoding/json"
 	"testing"
 )
 
@@ -13,13 +14,13 @@ func TestHTTPError(t *testing.T) {
 	}{
 		{
 			err:           Unauthorized("example message"),
-			wantText:      "Unauthorized: example message",
+			wantText:      "example message",
 			wantCode:      401,
 			wantErrorCode: ErrorCodeUnauthorized,
 		},
 		{
 			err:           InternalServerError("some message"),
-			wantText:      "Internal Server Error: some message",
+			wantText:      "some message",
 			wantCode:      500,
 			wantErrorCode: ErrorCodeInternalServerError,
 		},
@@ -39,5 +40,18 @@ func TestHTTPError(t *testing.T) {
 		if errorCode != c.wantErrorCode {
 			t.Errorf("got error code %d, want %d", errorCode, c.wantCode)
 		}
+	}
+}
+
+func TestHTTPError_MarshalJSON(t *testing.T) {
+	e := Unauthorized("you are not authorized to access this resource")
+	out, err := json.Marshal(&e)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := `{"code":"Unauthorized","message":"you are not authorized to access this resource"}`
+	got := string(out)
+	if want != got {
+		t.Errorf("got %s, want %s", got, want)
 	}
 }

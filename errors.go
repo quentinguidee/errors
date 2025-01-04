@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 )
@@ -69,11 +70,21 @@ func NewHTTPError(code ErrorCode, msg string) *HTTPError {
 }
 
 func (e *HTTPError) Error() string {
-	return fmt.Sprintf("%s: %s", e.Code.String(), e.Message)
+	return e.Message
 }
 
 func (e *HTTPError) StatusCode() int {
 	return int(e.Code)
+}
+
+func (e *HTTPError) MarshalJSON() ([]byte, error) {
+	b := bytes.Buffer{}
+	b.WriteByte('{')
+	b.WriteString(fmt.Sprintf(`"code":"%s"`, e.Code.String()))
+	b.WriteByte(',')
+	b.WriteString(fmt.Sprintf(`"message":"%s"`, e.Message))
+	b.WriteByte('}')
+	return b.Bytes(), nil
 }
 
 // 400
