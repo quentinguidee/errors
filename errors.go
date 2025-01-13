@@ -2,6 +2,7 @@ package errors
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -69,15 +70,15 @@ func NewHTTPError(code ErrorCode, msg string) *HTTPError {
 	}
 }
 
-func (e *HTTPError) Error() string {
+func (e HTTPError) Error() string {
 	return e.Message
 }
 
-func (e *HTTPError) StatusCode() int {
+func (e HTTPError) StatusCode() int {
 	return int(e.Code)
 }
 
-func (e *HTTPError) MarshalJSON() ([]byte, error) {
+func (e HTTPError) MarshalJSON() ([]byte, error) {
 	b := bytes.Buffer{}
 	b.WriteByte('{')
 	b.WriteString(fmt.Sprintf(`"code":"%s"`, e.Code.String()))
@@ -211,4 +212,15 @@ func NotExtended(msg string) *HTTPError {
 }
 func NetworkAuthenticationRequired(msg string) *HTTPError {
 	return NewHTTPError(ErrorCodeNetworkAuthenticationRequired, msg)
+}
+
+func IsStatus(status int, err error) bool {
+	var httpError *HTTPError
+	fmt.Printf("%s", err.Error())
+	if errors.As(err, &httpError) {
+		if httpError.StatusCode() == status {
+			return true
+		}
+	}
+	return false
 }

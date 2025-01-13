@@ -2,6 +2,8 @@ package errors
 
 import (
 	"encoding/json"
+	"errors"
+	"net/http"
 	"testing"
 )
 
@@ -53,5 +55,48 @@ func TestHTTPError_MarshalJSON(t *testing.T) {
 	got := string(out)
 	if want != got {
 		t.Errorf("got %s, want %s", got, want)
+	}
+}
+
+func TestIsStatus(t *testing.T) {
+	cases := []struct {
+		name       string
+		err        error
+		statusCode int
+		want       bool
+	}{
+		{
+			name:       "IsNotFound",
+			err:        NotFound("not found"),
+			statusCode: http.StatusNotFound,
+			want:       true,
+		},
+		{
+			name:       "IsUnauthorized",
+			err:        Unauthorized("you are not authorized to access this resource"),
+			statusCode: http.StatusUnauthorized,
+			want:       true,
+		},
+		{
+			name:       "IsNotUnauthorized",
+			err:        NotFound("not found"),
+			statusCode: http.StatusUnauthorized,
+			want:       false,
+		},
+		{
+			name:       "PlainError",
+			err:        errors.New("test"),
+			statusCode: http.StatusOK,
+			want:       false,
+		},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			want := c.want
+			got := IsStatus(c.statusCode, c.err)
+			if got != want {
+				t.Errorf("got %v, want %v", got, want)
+			}
+		})
 	}
 }
