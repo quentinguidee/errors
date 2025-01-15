@@ -216,7 +216,6 @@ func NetworkAuthenticationRequired(msg string) *HTTPError {
 
 func IsStatus(status int, err error) bool {
 	var httpError *HTTPError
-	fmt.Printf("%s", err.Error())
 	if errors.As(err, &httpError) {
 		if httpError.StatusCode() == status {
 			return true

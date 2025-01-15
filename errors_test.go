@@ -89,6 +89,12 @@ func TestIsStatus(t *testing.T) {
 			statusCode: http.StatusOK,
 			want:       false,
 		},
+		{
+			name:       "Nil",
+			err:        nil,
+			statusCode: http.StatusOK,
+			want:       false,
+		},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
