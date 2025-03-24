@@ -60,12 +60,21 @@ func (e ErrorCode) String() string {
 
 type HTTPError struct {
 	Code    ErrorCode `json:"code,omitempty"`
+	Name    string    `json:"name,omitempty"`
 	Message string    `json:"message,omitempty"`
 }
 
 func NewHTTPError(code ErrorCode, msg string) *HTTPError {
 	return &HTTPError{
 		Code:    code,
+		Message: msg,
+	}
+}
+
+func NewHTTPErrorNamed(code ErrorCode, name, msg string) *HTTPError {
+	return &HTTPError{
+		Code:    code,
+		Name:    name,
 		Message: msg,
 	}
 }
@@ -83,10 +92,16 @@ func (e HTTPError) MarshalJSON() ([]byte, error) {
 	b.WriteByte('{')
 	b.WriteString(fmt.Sprintf(`"code":"%s"`, e.Code.String()))
 	b.WriteByte(',')
+	if e.Name != "" {
+		b.WriteString(fmt.Sprintf(`"name":"%s"`, e.Name))
+		b.WriteByte(',')
+	}
 	b.WriteString(fmt.Sprintf(`"message":"%s"`, e.Message))
 	b.WriteByte('}')
 	return b.Bytes(), nil
 }
+
+// Without codes
 
 // 400
 
@@ -212,6 +227,132 @@ func NotExtended(msg string) *HTTPError {
 }
 func NetworkAuthenticationRequired(msg string) *HTTPError {
 	return NewHTTPError(ErrorCodeNetworkAuthenticationRequired, msg)
+}
+
+// With codes
+
+func BadRequestNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeBadRequest, name, msg)
+}
+func UnauthorizedNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeUnauthorized, name, msg)
+}
+func PaymentRequiredNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodePaymentRequired, name, msg)
+}
+func ForbiddenNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeForbidden, name, msg)
+}
+func NotFoundNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeNotFound, name, msg)
+}
+func MethodNotAllowNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeMethodNotAllow, name, msg)
+}
+func NotAcceptableNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeNotAcceptable, name, msg)
+}
+func ProxyAuthRequiredNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeProxyAuthRequired, name, msg)
+}
+func RequestTimeoutNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeRequestTimeout, name, msg)
+}
+func ConflictNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeConflict, name, msg)
+}
+func GoneNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeGone, name, msg)
+}
+func LengthRequiredNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeLengthRequired, name, msg)
+}
+func PreconditionFailedNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodePreconditionFailed, name, msg)
+}
+func ContentTooLargeNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeContentTooLarge, name, msg)
+}
+func URITooLongNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeURITooLong, name, msg)
+}
+func UnsupportedMediaTypeNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeUnsupportedMediaType, name, msg)
+}
+func RangeNotSatisfiableNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeRangeNotSatisfiable, name, msg)
+}
+func ExpectationFailedNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeExpectationFailed, name, msg)
+}
+func TeapotNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeTeapot, name, msg)
+}
+func MisdirectedRequestNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeMisdirectedRequest, name, msg)
+}
+func UnprocessableContentNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeUnprocessableContent, name, msg)
+}
+func LockedNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeLocked, name, msg)
+}
+func FailedDependencyNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeFailedDependency, name, msg)
+}
+func TooEarlyNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeTooEarly, name, msg)
+}
+func UpgradeRequiredNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeUpgradeRequired, name, msg)
+}
+func PreconditionRequiredNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodePreconditionRequired, name, msg)
+}
+func TooManyRequestsNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeTooManyRequests, name, msg)
+}
+func RequestHeaderFieldsTooLargeNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeRequestHeaderFieldsTooLarge, name, msg)
+}
+func UnavailableForLegalReasonsNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeUnavailableForLegalReasons, name, msg)
+}
+
+// 500
+
+func InternalServerErrorNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeInternalServerError, name, msg)
+}
+func NotImplementedNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeNotImplemented, name, msg)
+}
+func BadGatewayNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeBadGateway, name, msg)
+}
+func ServiceUnavailableNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeServiceUnavailable, name, msg)
+}
+func GatewayTimeoutNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeGatewayTimeout, name, msg)
+}
+func HTTPVersionNotSupportedNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeHTTPVersionNotSupported, name, msg)
+}
+func VariantAlsoNegotiatesNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeVariantAlsoNegotiates, name, msg)
+}
+func InsufficientStorageNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeInsufficientStorage, name, msg)
+}
+func LoopDetectedNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeLoopDetected, name, msg)
+}
+func NotExtendedNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeNotExtended, name, msg)
+}
+func NetworkAuthenticationRequiredNamed(name, msg string) *HTTPError {
+	return NewHTTPErrorNamed(ErrorCodeNetworkAuthenticationRequired, name, msg)
 }
 
 func IsStatus(status int, err error) bool {

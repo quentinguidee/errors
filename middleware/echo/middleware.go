@@ -20,6 +20,7 @@ func Error(next echo.HandlerFunc) echo.HandlerFunc {
 			_, _ = fmt.Fprintf(os.Stderr, "%v\n", err)
 			return c.JSON(http.StatusInternalServerError, &errors.HTTPError{
 				Code:    errors.ErrorCodeInternalServerError,
+				Name:    "ERR_UNKNOWN",
 				Message: "An unknown error occurred.",
 			})
 		}

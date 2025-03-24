@@ -46,16 +46,31 @@ func TestHTTPError(t *testing.T) {
 }
 
 func TestHTTPError_MarshalJSON(t *testing.T) {
-	e := Unauthorized("you are not authorized to access this resource")
-	out, err := json.Marshal(&e)
-	if err != nil {
-		t.Fatal(err)
-	}
-	want := `{"code":"Unauthorized","message":"you are not authorized to access this resource"}`
-	got := string(out)
-	if want != got {
-		t.Errorf("got %s, want %s", got, want)
-	}
+	t.Run("WithoutCode", func(t *testing.T) {
+		e := Unauthorized("you are not authorized to access this resource")
+		out, err := json.Marshal(&e)
+		if err != nil {
+			t.Fatal(err)
+		}
+		want := `{"code":"Unauthorized","message":"you are not authorized to access this resource"}`
+		got := string(out)
+		if want != got {
+			t.Errorf("got %s, want %s", got, want)
+		}
+	})
+
+	t.Run("WithCode", func(t *testing.T) {
+		e := UnauthorizedNamed("ERR_UNAUTHORIZED", "you are not authorized to access this resource")
+		out, err := json.Marshal(&e)
+		if err != nil {
+			t.Fatal(err)
+		}
+		want := `{"code":"Unauthorized","name":"ERR_UNAUTHORIZED","message":"you are not authorized to access this resource"}`
+		got := string(out)
+		if want != got {
+			t.Errorf("got %s, want %s", got, want)
+		}
+	})
 }
 
 func TestIsStatus(t *testing.T) {
