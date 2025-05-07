@@ -14,7 +14,7 @@ func Error(next echo.HandlerFunc) echo.HandlerFunc {
 		err := next(c)
 		if err != nil {
 			var target *errors.HTTPError
-			if errors.As(err, &target) && target.Code < 500 {
+			if errors.As(err, &target) && (target.Code < 500 || target.Code == 503) {
 				return c.JSON(target.StatusCode(), target)
 			}
 			_, _ = fmt.Fprintf(os.Stderr, "%v\n", err)
